@@ -16,3 +16,22 @@ FROM
     FROM transactions
 ) AS counter_table
 WHERE group_counter = 3;
+
+-- Second Highest Salary, FAANG SQL Interview Question
+SELECT
+  salary AS second_highest_salary
+FROM
+  (
+  WITH uniqueSalaries AS (
+    SELECT DISTINCT salary
+    from employee
+  )
+  
+  SELECT
+    salary,
+    ROW_NUMBER () OVER (
+    order by salary desc 
+    ) as counter
+  FROM uniqueSalaries
+  ) as counter_table
+WHERE counter = 2;
