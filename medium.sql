@@ -17,21 +17,32 @@ FROM
 ) AS counter_table
 WHERE group_counter = 3;
 
--- Second Highest Salary, FAANG SQL Interview Question
+-- 2. Second Highest Salary, FAANG SQL Interview Question
 SELECT
   salary AS second_highest_salary
 FROM
   (
   WITH uniqueSalaries AS (
     SELECT DISTINCT salary
-    from employee
+    FROM employee
   )
   
   SELECT
     salary,
     ROW_NUMBER () OVER (
-    order by salary desc 
-    ) as counter
+    ORDER BY salary DESC 
+    ) AS counter
   FROM uniqueSalaries
-  ) as counter_table
+  ) AS counter_table
 WHERE counter = 2;
+
+-- 3. Tweets' Rolling Averages, Twitter SQL Interview Question
+SELECT 
+  user_id,
+  tweet_date,
+  ROUND(AVG(tweet_count) OVER (
+  PARTITION BY user_id
+  ORDER BY tweet_date
+  ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+  ), 2) AS rolling_avg_3d
+FROM tweets;
