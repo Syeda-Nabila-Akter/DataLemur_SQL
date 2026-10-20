@@ -62,3 +62,34 @@ SELECT
   ROUND ((send_sum/(send_sum + open_sum))*100, 2) AS send_perc,
   ROUND ((open_sum/(send_sum + open_sum))*100, 2) AS open_perc
 FROM open_send_cte;
+
+-- 5. Highest-Grossing Items, Amazon SQL Interview Question
+WITH spend_sum AS(
+SELECT
+  category,
+  product,
+  SUM(spend) as total_spend
+FROM product_spend
+WHERE transaction_date BETWEEN '2022-01-01' AND '2022-12-31'
+GROUP BY category, product
+),
+
+rank_product AS(
+SELECT  
+  category,
+  product,
+  total_spend,
+  ROW_NUMBER() OVER (
+    PARTITION BY category
+    ORDER BY total_spend desc
+  ) AS rnk
+FROM spend_sum 
+)
+
+SELECT DISTINCT
+  category,
+  product,
+  total_spend
+FROM rank_product
+WHERE rnk <= 2
+ORDER BY category, total_spend DESC;
