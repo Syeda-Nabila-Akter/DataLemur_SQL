@@ -46,3 +46,19 @@ SELECT
   ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
   ), 2) AS rolling_avg_3d
 FROM tweets;
+
+-- 4. Sending vs. Opening Snaps, Snapchat SQL Interview Question
+WITH open_send_cte AS(
+  SELECT
+  ab.age_bucket,
+  SUM(CASE WHEN activity_type = 'send' THEN time_spent ELSE 0 END) send_sum,
+  SUM(CASE WHEN activity_type = 'open' THEN time_spent ELSE 0 END) open_sum
+  FROM activities a
+  LEFT JOIN age_breakdown ab on a.user_id = ab.user_id
+  GROUP BY ab.age_bucket
+)
+SELECT 
+  age_bucket,
+  ROUND ((send_sum/(send_sum + open_sum))*100, 2) AS send_perc,
+  ROUND ((open_sum/(send_sum + open_sum))*100, 2) AS open_perc
+FROM open_send_cte;
