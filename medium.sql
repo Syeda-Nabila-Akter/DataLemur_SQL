@@ -93,3 +93,28 @@ SELECT DISTINCT
 FROM rank_product
 WHERE rnk <= 2
 ORDER BY category, total_spend DESC;
+
+-- Top Three Salaries, FAANG SQL Interview Question
+WITH rank_table AS(
+  SELECT 
+      *,
+      DENSE_RANK() OVER (
+        PARTITION BY department_id ORDER BY salary DESC
+      ) AS rnk
+  FROM employee
+)
+
+SELECT
+    d.department_name,
+    rt.name,
+    rt.salary
+FROM 
+    rank_table rt
+LEFT JOIN department d ON
+    rt.department_id = d.department_id
+WHERE
+    rnk IN (1,2,3)
+ORDER BY 
+department_name ASC, 
+salary DESC,
+name ASC;
