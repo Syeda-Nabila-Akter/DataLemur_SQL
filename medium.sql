@@ -94,7 +94,7 @@ FROM rank_product
 WHERE rnk <= 2
 ORDER BY category, total_spend DESC;
 
--- Top Three Salaries, FAANG SQL Interview Question
+-- 6. Top Three Salaries, FAANG SQL Interview Question
 WITH rank_table AS(
   SELECT 
       *,
@@ -118,3 +118,11 @@ ORDER BY
 department_name ASC, 
 salary DESC,
 name ASC;
+
+-- 7. Signup Activation Rate, TikTok SQL Interview Question
+SELECT 
+  ROUND ((COUNT(CASE WHEN texts.signup_action = 'Confirmed' THEN 1 END)/
+  COUNT(CASE WHEN texts.signup_action = 'Not Confirmed' OR texts.signup_action IS NULL THEN 1 END)::NUMERIC), 2) AS confirm_rate
+FROM emails
+LEFT JOIN texts
+  ON emails.email_id = texts.email_id;
